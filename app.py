@@ -11,9 +11,9 @@ def get_riot():
     return riot_aa
 
 
-st.set_page_config(page_title="UAbDist", page_icon=":scales:", layout="wide")
+st.set_page_config(page_title="UAbSim", page_icon=":scales:", layout="wide")
 
-st.header('Ultimate Antibody Distances')
+st.header('Ultimate Antibody Similarity Calculator')
 
 seq1 = st.text_input('Enter 1st sequence')
 
