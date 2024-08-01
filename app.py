@@ -15,7 +15,7 @@ st.set_page_config(page_title="UAbSim", page_icon=":scales:", layout="wide")
 
 st.header('Ultimate Antibody Similarity Calculator')
 
-seq1 = st.text_input('Enter 1st sequence')
+seq1 = st.text_input('Enter 1st sequence', 'EVQLVESGGGLVQPGGSLRLSCAASGRTFSYNPMGWFRQAPGKGRELVAAISRTGGSTYYPDSVEGRFTISRDNAKRMVYLQMNSLRAEDTAVYYCAAAGVRAEDGRVRTLPSEYTFWGQGTQVTVSS')
 
 airr_result1: AirrRearrangementEntryAA = get_riot().run_on_sequence(
     header="foo",
@@ -27,7 +27,7 @@ ps1 = airr_result1.sequence_alignment_aa
 
 st.markdown(f"Primary sequence: `{ps1}`")
 
-seq2 = st.text_input('Enter 2nd sequence')
+seq2 = st.text_input('Enter 2nd sequence', 'EVQLVESGGGLVQPGGSLRLSCAYYASGRTFSYNPMGWFRQAPGKGRELVAAISRTGGSTYYPDSVEGRFTISRDNAKRMVYLQMNSLRAEDTAVYYCAYYAAGVRAEDGRVRTLPSEYTFWGQGTQVTVSS')
 
 airr_result2: AirrRearrangementEntryAA = get_riot().run_on_sequence(
     header="foo",
