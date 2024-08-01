@@ -1,20 +1,8 @@
-from dataclasses import asdict
-from functools import cmp_to_key
-from tracemalloc import Trace
-
-from encodings.hex_codec import hex_decode
-from reprlib import aRepr
-from telnetlib import theNULL
-
 import Levenshtein
 import pandas as pd
 import streamlit as st
-from gitdb.util import to_hex_sha
-from markdown_it.rules_inline import image
-
-from riot_na import create_riot_aa, Organism, Scheme, RiotNumberingAA, AirrRearrangementEntryAA
-from streamlit.elements.image import image_to_url
-from yaml import add_implicit_resolver
+from functools import cmp_to_key
+from riot_na import create_riot_aa, Scheme, RiotNumberingAA, AirrRearrangementEntryAA
 
 
 @st.cache_resource
