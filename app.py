@@ -9,6 +9,8 @@ from riot_na.alignment.skbio_alignment import align_aa
 from skbio.alignment import StripedSmithWaterman
 from functools import partial
 
+SEQ_1_DEFAULT = 'EVQLVESGGGLVQPGGSLRLSCAASGRTFSYNPMGWFRQAPGKGRELVAAISRTGGSTYYPDSVEGRFTISRDNAKRMVYLQMNSLRAEDTAVYYCAAAGVRAEDGRVRTLPSEYTFWGQGTQVTVSS'
+SEQ_2_DEFAULT = 'EVQLVESGGGLVQPGGSLRLSCAYYASGRTFSYNPMGWFRQAPGKGRELVAAISRTGGSTYYPDSVEGRFTISRDNAKRMVYLQMNSLRAEDTAVYYCAYYAAGVRAEDGRVRTLPSEYTFWGQGTQVTVSS'
 
 @st.cache_resource
 def get_riot():
@@ -17,6 +19,22 @@ def get_riot():
 
 
 st.set_page_config(page_title="UAbSim", page_icon=":scales:", layout="wide")
+st.write(st.session_state)
+
+with st.sidebar:
+    st.subheader('Examples')
+    if st.button('Insertions in CDRH3'):
+        st.session_state['seq1'] = 'EVQLVESGGGLVQPGGSLRLSCAASGFTFSSYNMNWVRQAPGKGLEWVSYISSSSSTIYYADSVKGRFTISRDNAKNSLSLQMNSLRDEDTAVYYCARAYYYGMDVWGQGTTVTVSS'
+        st.session_state['seq2'] = 'EVQLVESGGGLVQPGGSLRLSCAASGFTFSSYNMNWVRQAPGKGLEWVSYISSSSSTIYYADSVKGRFTISRDNAKNSLSLQMNSLRDEDTAVYYCAYYYYYYYYAAGVRAEDGRYYVRTLPSEYTFWGQGTQVTVSS'
+    if st.button('Insertions in CDRH3 and CDRH1'):
+        st.session_state['seq1'] = 'EVQLVESGGGLVQPGGSLRLSCAASGFTAYAYAYAYFSSYNMNWVRQAPGKGLEWVSYISSSSSTIYYADSVKGRFTISRDNAKNSLSLQMNSLRDEDTAVYYCARAYYYGMDVWGQGTTVTVSS'
+        st.session_state['seq2'] = 'EVQLVESGGGLVQPGGSLRLSCAASGFTFSSYNMNWVRQAPGKGLEWVSYISSSSSTIYYADSVKGRFTISRDNAKNSLSLQMNSLRDEDTAVYYCAYYYYYYYYAAGVRAEDGRYYVRTLPSEYTFWGQGTQVTVSS'
+    if st.button('Light and heavy'):
+        st.session_state['seq1'] = 'EVQLVESGGGLVQPGGSLRLSCAASGFTFSSYNMNWVRQAPGKGLEWVSYISSSSSTIYYADSVKGRFTISRDNAKNSLSLQMNSLRDEDTAVYYCARAYYYGMDVWGQGTTVTVSS'
+        st.session_state['seq2'] = 'DIQMTQTASSLSASLGDRVTISCRASQYINNYLNWYQQKPDGTVTLLIYYTSILHSGVPSRFIGSGSGTDYSLTISNLDQEDIATYFCQQGYTLPLTFGAGTKLELK'
+    if st.button('CDRH3 duplication'):
+        st.session_state['seq1'] = 'EVQLVESGGGLVQPGGSLRLSCAASGRTFSYNPMGWFRQAPGKGRELVAAISRTGGSTYYPDSVEGRFTISRDNAKRMVYLQMNSLRAEDTAVYYCAAAGVRAEDGRVRTLPSEYTFWGQGTQVTVSS'
+        st.session_state['seq2'] = 'EVQLVESGGGLVQPGGSLRLSCAASGRTFSYNPMGWFRQAPGKGRELVAAISRTGGSTYYPDSAAAGVRAEDGRVRTLPSEYTFVEGRFTISRDNAKRMVYLQMNSLRAEDTAVYYCAAAGVRAEDGRVRTLPSEYTFWGQGTQVTVSS'
 
 
 def number_sequence(seq: str, scheme: Scheme) -> AirrRearrangementEntryAA:
@@ -59,8 +77,7 @@ def get_table(map1, map2, scheme):
 
 st.header('Ultimate Antibody Similarity Calculator')
 
-seq1 = st.text_input('Enter 1st sequence',
-                     'EVQLVESGGGLVQPGGSLRLSCAASGRTFSYNPMGWFRQAPGKGRELVAAISRTGGSTYYPDSVEGRFTISRDNAKRMVYLQMNSLRAEDTAVYYCAAAGVRAEDGRVRTLPSEYTFWGQGTQVTVSS')
+seq1 = st.text_input('Enter 1st sequence', st.session_state['seq1'] if 'seq1' in st.session_state else SEQ_1_DEFAULT)
 
 seq1_numbered = {
     scheme: number_sequence(seq1, scheme) for scheme in Scheme
@@ -69,8 +86,7 @@ ps1 = seq1_numbered['imgt'].sequence_alignment_aa
 
 st.markdown(f"Primary sequence: `{ps1}`")
 
-seq2 = st.text_input('Enter 2nd sequence',
-                     'EVQLVESGGGLVQPGGSLRLSCAYYASGRTFSYNPMGWFRQAPGKGRELVAAISRTGGSTYYPDSVEGRFTISRDNAKRMVYLQMNSLRAEDTAVYYCAYYAAGVRAEDGRVRTLPSEYTFWGQGTQVTVSS')
+seq2 = st.text_input('Enter 2nd sequence', st.session_state['seq2'] if 'seq2' in st.session_state else SEQ_2_DEFAULT)
 
 seq2_numbered = {
     scheme: number_sequence(seq2, scheme) for scheme in Scheme
@@ -116,11 +132,11 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.subheader('Aligned numbered sequences')
     col11, col12 = col1.columns(2)
-    tabs = col11.tabs(['IMGT', 'Chothia', 'Martin', 'Kabat'])
+    tabs = col11.tabs(['IMGT', 'Kabat', 'Chothia', 'Martin'])
     tabs[0].dataframe(numbered_df['imgt'], height=700)
-    tabs[1].dataframe(numbered_df['chothia'], height=700)
-    tabs[2].dataframe(numbered_df['martin'], height=700)
-    tabs[3].dataframe(numbered_df['kabat'], height=700)
+    tabs[1].dataframe(numbered_df['kabat'], height=700)
+    tabs[2].dataframe(numbered_df['chothia'], height=700)
+    tabs[3].dataframe(numbered_df['martin'], height=700)
 
     distances = {
         'Same IMGT': same_aa['imgt'],
@@ -166,7 +182,7 @@ with col3:
         'Martin similarity (norm to num unique Martin)': same_aa['martin'] / nuniqe_pos['martin'],
     }
 
-    st.dataframe(pd.DataFrame.from_dict(distances, orient='index', columns=['Value']))
+    st.dataframe(pd.DataFrame.from_dict(distances, orient='index', columns=['Value']), height=620)
 
 with col4:
     st.subheader('Sequence based distances')
