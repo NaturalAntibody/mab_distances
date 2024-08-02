@@ -19,7 +19,7 @@ def get_riot():
 
 
 st.set_page_config(page_title="UAbSim", page_icon=":scales:", layout="wide")
-st.write(st.session_state)
+# st.write(st.session_state)
 
 with st.sidebar:
     st.subheader('Examples')
